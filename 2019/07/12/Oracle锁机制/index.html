@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Oracle锁机制 | 做什么事都要专心一致</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="oracle锁机制***数据库都有并发机制，不过带来的问题就是数据访问的冲突。为了解决这个问题，大多数数据库用的方法就是数据的锁定。数据的锁定分为两种方法，第一种叫做悲观锁，第二种叫做乐观锁 1、悲观锁悲观锁顾名思义，就是对数据的冲突采取一种悲观的态度，也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住，没有提交或者回滚事务前都不能操作这些数据示例用SCOTT.class表 1gr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle锁机制">
+<meta property="og:url" content="http://yoursite.com/2019/07/12/Oracle锁机制/index.html">
+<meta property="og:site_name" content="做什么事都要专心一致">
+<meta property="og:description" content="oracle锁机制***数据库都有并发机制，不过带来的问题就是数据访问的冲突。为了解决这个问题，大多数数据库用的方法就是数据的锁定。数据的锁定分为两种方法，第一种叫做悲观锁，第二种叫做乐观锁 1、悲观锁悲观锁顾名思义，就是对数据的冲突采取一种悲观的态度，也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住，没有提交或者回滚事务前都不能操作这些数据示例用SCOTT.class表 1gr">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-12T03:27:24.392Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Oracle锁机制">
+<meta name="twitter:description" content="oracle锁机制***数据库都有并发机制，不过带来的问题就是数据访问的冲突。为了解决这个问题，大多数数据库用的方法就是数据的锁定。数据的锁定分为两种方法，第一种叫做悲观锁，第二种叫做乐观锁 1、悲观锁悲观锁顾名思义，就是对数据的冲突采取一种悲观的态度，也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住，没有提交或者回滚事务前都不能操作这些数据示例用SCOTT.class表 1gr">
+  
+    <link rel="alternate" href="/atom.xml" title="做什么事都要专心一致" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">做什么事都要专心一致</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Oracle锁机制" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/12/Oracle锁机制/" class="article-date">
+  <time datetime="2019-07-12T03:24:54.000Z" itemprop="datePublished">2019-07-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Oracle锁机制
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="oracle锁机制"><a href="#oracle锁机制" class="headerlink" title="oracle锁机制***"></a>oracle锁机制***</h1><p>数据库都有并发机制，不过带来的问题就是<br>数据访问的冲突。<br>为了解决这个问题，大多数数据库用的方法<br>就是数据的锁定。<br>数据的锁定分为两种方法，第一种叫做悲观锁，<br>第二种叫做乐观锁</p>
+<h2 id="1、悲观锁"><a href="#1、悲观锁" class="headerlink" title="1、悲观锁"></a>1、悲观锁</h2><p>悲观锁顾名思义，就是对数据的冲突采取一种悲观的态度，<br>也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住，<br>没有提交或者回滚事务前都不能操作这些数据<br>示例用SCOTT.class表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant update on class to xiaoming;</span><br></pre></td></tr></table></figure>
+
+<p>然后使用for update将id为2的数据锁住</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from class <span class="built_in">where</span> classid=2 <span class="keyword">for</span> update;</span><br></pre></td></tr></table></figure>
+
+<p>重新开一个sqlplus,使用xiaoming登录<br>修改修改id为2的数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update scott.class <span class="built_in">set</span> cname=<span class="string">'a'</span> <span class="built_in">where</span> classid=2;</span><br></pre></td></tr></table></figure>
+
+<p>这时候我们会看到一直卡在这里，操作堵塞了</p>
+<p>切换到SCOTT的sqlplus下，使用commit提交事务</p>
+<p>这时候xiaoming的update操作才能完成</p>
+<p>但是这样的操作会导致所有操作带锁的数据时，都要排队，效率会低下</p>
+<h2 id="2、乐观锁"><a href="#2、乐观锁" class="headerlink" title="2、乐观锁"></a>2、乐观锁</h2><p>乐观锁就是一开始假设不会造成数据冲突，在最后提交的时候再进行数据冲突检测<br>像我们后面学习的数据访问层的hibernate框架里就实现了乐观锁<br>一般做法是在数据表里新增一列，表示版本，在操作之前就获得数据的版本号<br>最后提交时，拿取到的版本号和数据库现在的版本号对比，如果一致就可以提交操作<br>否则就是已经被别人改动过了</p>
+<h2 id="3、死锁"><a href="#3、死锁" class="headerlink" title="3、死锁"></a>3、死锁</h2><p>用户a操作a表，加锁<br>用户b操作b表，加锁<br>两个用户都没有提交事务释放锁，这时候<br>a操作b表，等待b表解锁<br>b操作a表，等待a表解锁<br>这就形成了死锁<br>死锁一般需要在程序设计时就避免掉</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/07/12/Oracle锁机制/" data-id="cjxzjj4je0000o0dfvhcm3ak4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/07/09/Oracle入门/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Oracle入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/07/12/Oracle锁机制/">Oracle锁机制</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/09/Oracle入门/">Oracle入门</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/01/如何解决AS爆红/">如何解决AS爆红</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/30/hexo入门/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 dykgreat<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

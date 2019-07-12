@@ -5,15 +5,19 @@
   
 
   
-  <title>做什么事都要专心一致</title>
+  <title>Oracle入门 | 做什么事都要专心一致</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="做什么事都要专心一致">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="一、Oracle安装1、自己在本机带着安装，或者使用虚拟机上安装都可以2、带学员安装时先安装默认的orcl实例3、作业里要求创建自定义数据库，所以自定义数据库的创建，监听器的创建也需要讲解(可以在上机课拿学员的演示) 二、Oracle的基本概念1、oracle数据库与oracle实例Oracle数据库系统(RDBMS)提供完整的信息管理，由oracle数据库和多个oracle实例组成RDBMS:关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle入门">
+<meta property="og:url" content="http://yoursite.com/2019/07/09/Oracle入门/index.html">
 <meta property="og:site_name" content="做什么事都要专心一致">
+<meta property="og:description" content="一、Oracle安装1、自己在本机带着安装，或者使用虚拟机上安装都可以2、带学员安装时先安装默认的orcl实例3、作业里要求创建自定义数据库，所以自定义数据库的创建，监听器的创建也需要讲解(可以在上机课拿学员的演示) 二、Oracle的基本概念1、oracle数据库与oracle实例Oracle数据库系统(RDBMS)提供完整的信息管理，由oracle数据库和多个oracle实例组成RDBMS:关">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-09T07:27:10.846Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="做什么事都要专心一致">
+<meta name="twitter:title" content="Oracle入门">
+<meta name="twitter:description" content="一、Oracle安装1、自己在本机带着安装，或者使用虚拟机上安装都可以2、带学员安装时先安装默认的orcl实例3、作业里要求创建自定义数据库，所以自定义数据库的创建，监听器的创建也需要讲解(可以在上机课拿学员的演示) 二、Oracle的基本概念1、oracle数据库与oracle实例Oracle数据库系统(RDBMS)提供完整的信息管理，由oracle数据库和多个oracle实例组成RDBMS:关">
   
     <link rel="alternate" href="/atom.xml" title="做什么事都要专心一致" type="application/atom+xml">
   
@@ -60,61 +64,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Oracle锁机制" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/07/12/Oracle锁机制/" class="article-date">
-  <time datetime="2019-07-12T03:24:54.000Z" itemprop="datePublished">2019-07-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/12/Oracle锁机制/">Oracle锁机制</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="oracle锁机制"><a href="#oracle锁机制" class="headerlink" title="oracle锁机制***"></a>oracle锁机制***</h1><p>数据库都有并发机制，不过带来的问题就是<br>数据访问的冲突。<br>为了解决这个问题，大多数数据库用的方法<br>就是数据的锁定。<br>数据的锁定分为两种方法，第一种叫做悲观锁，<br>第二种叫做乐观锁</p>
-<h2 id="1、悲观锁"><a href="#1、悲观锁" class="headerlink" title="1、悲观锁"></a>1、悲观锁</h2><p>悲观锁顾名思义，就是对数据的冲突采取一种悲观的态度，<br>也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住，<br>没有提交或者回滚事务前都不能操作这些数据<br>示例用SCOTT.class表</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant update on class to xiaoming;</span><br></pre></td></tr></table></figure>
-
-<p>然后使用for update将id为2的数据锁住</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from class <span class="built_in">where</span> classid=2 <span class="keyword">for</span> update;</span><br></pre></td></tr></table></figure>
-
-<p>重新开一个sqlplus,使用xiaoming登录<br>修改修改id为2的数据</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update scott.class <span class="built_in">set</span> cname=<span class="string">'a'</span> <span class="built_in">where</span> classid=2;</span><br></pre></td></tr></table></figure>
-
-<p>这时候我们会看到一直卡在这里，操作堵塞了</p>
-<p>切换到SCOTT的sqlplus下，使用commit提交事务</p>
-<p>这时候xiaoming的update操作才能完成</p>
-<p>但是这样的操作会导致所有操作带锁的数据时，都要排队，效率会低下</p>
-<h2 id="2、乐观锁"><a href="#2、乐观锁" class="headerlink" title="2、乐观锁"></a>2、乐观锁</h2><p>乐观锁就是一开始假设不会造成数据冲突，在最后提交的时候再进行数据冲突检测<br>像我们后面学习的数据访问层的hibernate框架里就实现了乐观锁<br>一般做法是在数据表里新增一列，表示版本，在操作之前就获得数据的版本号<br>最后提交时，拿取到的版本号和数据库现在的版本号对比，如果一致就可以提交操作<br>否则就是已经被别人改动过了</p>
-<h2 id="3、死锁"><a href="#3、死锁" class="headerlink" title="3、死锁"></a>3、死锁</h2><p>用户a操作a表，加锁<br>用户b操作b表，加锁<br>两个用户都没有提交事务释放锁，这时候<br>a操作b表，等待b表解锁<br>b操作a表，等待a表解锁<br>这就形成了死锁<br>死锁一般需要在程序设计时就避免掉</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/12/Oracle锁机制/" data-id="cjxzjj4je0000o0dfvhcm3ak4" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Oracle入门" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Oracle入门" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/07/09/Oracle入门/" class="article-date">
   <time datetime="2019-07-09T07:05:43.000Z" itemprop="datePublished">2019-07-09</time>
@@ -127,8 +77,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/09/Oracle入门/">Oracle入门</a>
+    <h1 class="article-title" itemprop="name">
+      Oracle入门
     </h1>
   
 
@@ -235,93 +185,28 @@ oracle数据处理都是两阶段提交，比如客户端JDBC发送一次commit�
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-如何解决AS爆红" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/07/01/如何解决AS爆红/" class="article-date">
-  <time datetime="2019-07-01T03:28:21.000Z" itemprop="datePublished">2019-07-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+    <a href="/2019/07/12/Oracle锁机制/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/01/如何解决AS爆红/">如何解决AS爆红</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><h4 id="C-Users-Administrator-gradle下面的gradle-properties文件"><a href="#C-Users-Administrator-gradle下面的gradle-properties文件" class="headerlink" title="C:\Users\Administrator.gradle下面的gradle.properties文件"></a>C:\Users\Administrator.gradle下面的gradle.properties文件</h4><p>可以看到正是之前我设置的代理，导致全局文件gradle.properties会默认一直执行这个代理去访问并下载，因此报错<br>最后将这四行注释掉，同样在前面都加上 # 号，保存<br>再次build ，最终顺利的解决了问题</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/01/如何解决AS爆红/" data-id="cjxzjj4jv0001o0df76vwj7x5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hexo入门" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/06/30/hexo入门/" class="article-date">
-  <time datetime="2019-06-30T03:21:56.783Z" itemprop="datePublished">2019-06-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+          Oracle锁机制
         
+      </div>
+    </a>
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/30/hexo入门/">Hello World</a>
-    </h1>
   
+    <a href="/2019/07/01/如何解决AS爆红/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">如何解决AS爆红</div>
+    </a>
+  
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>欢迎来到<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>！这是你的第一篇文章。查看 <a href="https://hexo.io/docs/" target="_blank" rel="noopener">文档</a> 以获取更多信息。如果您在使用Hexo时遇到任何问题，可以在 <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">故障</a> 到答案，或者您可以在<a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>询问我。.</p>
-<h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><h3 id="创建一个新帖子"><a href="#创建一个新帖子" class="headerlink" title="创建一个新帖子"></a>创建一个新帖子</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="运行服务器"><a href="#运行服务器" class="headerlink" title="运行服务器"></a>运行服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<h3 id="生成静态文件"><a href="#生成静态文件" class="headerlink" title="生成静态文件"></a>生成静态文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<h3 id="部署到远程站点"><a href="#部署到远程站点" class="headerlink" title="部署到远程站点"></a>部署到远程站点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/30/hexo入门/" data-id="cjxzjj4lj0003o0df7lxyaije" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-
 
 </section>
         
